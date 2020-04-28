@@ -1,6 +1,7 @@
 import React from 'react';
 import io from 'socket.io-client';
 import Peer from 'simple-peer';
+import {Mic, MicOff, Videocam, VideocamOff} from '@material-ui/icons';
 import './Room.css'
 
 const server = "http://localhost:8080";
@@ -33,6 +34,7 @@ class Call {
   };
 
   connect = (caller) => {
+    console.log(caller)
       this.peer.signal(caller)
   }
 }
@@ -43,30 +45,27 @@ class Room extends React.Component {
     let name;
     console.log(props)
     if (props.location.state === undefined) {
-      console.log("Undefined")
+      console.log("Undefined");
         alert("You cant enter this room")
       return;
     }
     name = props.location.state.name;
     this.state = {
-      callers: [],
       isHost: false,
+      isMicOn: true,
+      isCameraOn: true,
       userVideo: {},
       name
 
     }
   }
-
   videoCall = new Call();
 
   start = (id) =>  {
-    console.log("starting")
     const peer = this.videoCall.init(this.state.localStream, this.state.isHost);
     this.setState({peer});
 
     peer.on('signal', data => {
-      console.log("Signal")
-      console.log(data);
       const signal = {
         room: id,
         name: this.state.name,
@@ -82,8 +81,8 @@ class Room extends React.Component {
     })
   };
 
-  call = callers => {
-    this.videoCall.connect(callers);
+  call = caller => {
+    this.videoCall.connect(caller);
   };
 
   getUserMedia() {
@@ -127,14 +126,17 @@ class Room extends React.Component {
 
     socket.on('ready', data => {
       console.log(data)
+      console.log(data[1])
+      const otherName = this.state.isHost ? data[1] : data[0]
+      this.setState({
+        otherName
+      });
       this.start(roomId)
-      console.log("Ready")
     });
 
     socket.on('desc', data => {
       if (data.desc.type === 'offer' && this.state.isHost) return;
       if (data.desc.type === 'answer' && !this.state.isHost) return;
-      console.log(data)
       this.call(data.desc);
     })
   }
@@ -142,26 +144,55 @@ class Room extends React.Component {
   renderVideos() {
     return(
       <div id="videos">
-        <video autoPlay id="localVideo" ref={video => (this.localVideo = video)} />
+        <div className="single-video">
+          <h3>{this.state.name}</h3>
+          <video autoPlay id="localVideo" ref={video => (this.localVideo = video)} />
+        </div>
+        <div className="single-video">
+        <h3>{this.state.otherName}</h3>
         <video autoPlay id="remoteVideo" ref={video => {this.remoteVideo = video}}  />
+        </div>
 
-        {
-          this.state.callers.map((caller, index) => {
-            return (
-              <div>
-              </div>
-            )
-          })
-        }
       </div>
     )
   }
 
+  setMic = () => {
+    if (this.state.localStream.getAudioTracks().length > 0) {
+      this.state.localStream.getAudioTracks().forEach(audiotrack => {
+        audiotrack.enabled = !audiotrack.enabled
+      })
+    }
+    this.setState({
+      isMicOn : !this.state.isMicOn
+    });
+  };
+
+  setCamera = () => {
+    if (this.state.localStream.getVideoTracks().length > 0) {
+      this.state.localStream.getVideoTracks().forEach(videoTrack => {
+        videoTrack.enabled = !videoTrack.enabled;
+      })
+    };
+    this.setState({
+      isCameraOn: !this.state.isCameraOn
+    })
+  };
+
   render() {
     return (
       <div id="video-container">
-
         {this.renderVideos()}
+
+        <div id="controls">
+          <button onClick={() => this.setMic()}>
+            {this.state.isMicOn ? (<Mic />) : (<MicOff />)}
+          </button>
+
+          <button onClick={() => this.setCamera()}>
+            {this.state.isCameraOn ? (<Videocam />) : (<VideocamOff />)}
+          </button>
+        </div>
       </div>
     );
   }

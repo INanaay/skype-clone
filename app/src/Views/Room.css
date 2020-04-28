@@ -13,10 +13,42 @@
   align-items: flex-start;
   justify-content: space-around;
   width: 80%;
-  height: 80%;
-  background: #61dafb;
+  height: 60%;
+}
+
+.single-video{
+  display: flex;
+  height: 100%;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#controls {
+margin-top: 50px;
+
+}
+
+#controls button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 20px;
+  border-radius: 50%;
+}
+
+h3 {
+  color: white;
 }
 
 video {
-  width: 450px;
+  height: 100%;
+  width: 100%;
 }

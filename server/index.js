@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
       console.log("Host connected / Room created with id : " + roomId)
     }
     else {
-      if (sockets.length <= 5) {
+      if (sockets.length <= 2) {
         io.to(roomId).emit('ready', rooms[roomId]);
         console.log("Someone connected to room " + roomId);
       }
