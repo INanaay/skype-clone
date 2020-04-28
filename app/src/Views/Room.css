@@ -1,0 +1,22 @@
+#video-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  background: #282c34;
+  align-items: center;
+  justify-content: center;
+}
+
+#videos {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  width: 80%;
+  height: 80%;
+  background: #61dafb;
+}
+
+video {
+  width: 450px;
+}
