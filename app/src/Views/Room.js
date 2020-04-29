@@ -4,7 +4,7 @@ import Peer from 'simple-peer';
 import {Mic, MicOff, Videocam, VideocamOff} from '@material-ui/icons';
 import './Room.css'
 
-const server = "http://localhost:8080";
+const server = "https://protected-waters-36592.herokuapp.com/";
 const stun_server = "stun:stun4.l.google.com:19302";
 const turn_server = "turn:numb.viagenie.ca";
 
